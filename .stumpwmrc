@@ -1,0 +1,49 @@
+;; -*-lisp-*-
+(in-package :stumpwm)
+
+;; load modules
+(set-module-dir "~/git/stumpwm/contrib/")
+(load-module "cpu")
+(load-module "battery-portable")
+(load-module "amixer")
+
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
+(define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle pulse")
+;; good tutorial: https://wxww.reddit.com/r/stumpwm/comments/1gzg6a/modules_and_now_playing_on_the_mode_line/
+;; list available formatters with: *screen-mode-line-formatters*
+;; https://github.com/stumpwm/stumpwm-contrib
+;;
+;(load "/home/ben/git/stumpwm/contrib/cpu.lisp")
+
+(setf *window-format* "%m%n%s%c")
+(setf *screen-mode-line-format*
+      (list
+       "[^B%n^b] " ;; group number
+       "%W " ;; windows
+       "^>%d " ;; date
+       "| %C | " ;; cpu
+       ;; todo: add unread mail
+       ;; todo: add pomodoro timer and pomodoro message
+       "%B" ;; Battery
+       ))
+
+(setf *time-modeline-string* "%a %b %e %k:%M")
+
+(define-key *root-map* (kbd "M-x") "colon")
+(define-key *root-map* (kbd "M-r") "exec")
+;; Groups
+;; TODO: group switch to predefined, otherwise initiate
+;; TODO: group 1, web browser, 2 emacs
+
+;; enable modeline, must be put at end
+(enable-mode-line (current-screen) (current-head) t)
+
+;; holding down keys: https://www.reddit.com/r/stumpwm/comments/2ph3nj/any_good_tutorial_about_stumpwm_any_tips/
+;; xsteve http://www.xsteve.at/prg/stumpwm/
+;; battery status using amixer https://github.com/bsima/dotfiles/blob/master/stumpwmrc.symlink
+;; another config https://github.com/alezost/stumpwm-config/blob/master/keys.lisp
+;; https://github.com/tpine/.stumpwm.d/blob/master/keybindings.lisp
+;; https://github.com/stumpwm/stumpwm/blob/master/sample-stumpwmrc.lisp
+;; tips and tricks https://github.com/stumpwm/stumpwm/wiki/TipsAndTricks
+;; http://ardumont.github.io/howto-install-stumpwm
