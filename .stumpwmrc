@@ -59,7 +59,7 @@
 ;; "gselect Default")
 
 ;; switching define
-(frames-key *top-map*  (kbd "M-Page_Down") "fnext")
+(define-key *top-map*  (kbd "M-Page_Down") "fnext")
 
 (define-key *root-map* (kbd "M-x") "colon")
 (define-key *root-map* (kbd "M-r") "exec")
