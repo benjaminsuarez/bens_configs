@@ -41,8 +41,8 @@
 
 (define-key *top-map* (kbd "M-F4") "delete")
 (define-key stumpwm:*top-map* (stumpwm:kbd "F12") "mode-line")
-(define-key stumpwm:*top-map* (stumpwm:kbd "M-Down") "pull-hidden-previous")
-(define-key stumpwm:*top-map* (stumpwm:kbd "M-Up") "pull-hidden-next")
+(define-key stumpwm:*top-map* (stumpwm:kbd "M-Up") "pull-hidden-previous")
+(define-key stumpwm:*top-map* (stumpwm:kbd "M-Down") "pull-hidden-next")
 ;(define-key *root-map* (kbd "i") "status")
 ;(define-key *root-map* (kbd "B") "banish-window")
 ;(define-key *root-map* (kbd "S-Left") "move-window left")
@@ -82,6 +82,10 @@
 
 (setf *time-modeline-string* "%a %b %e %k:%M")
 
+;;
+;; Messages centered on the screen.
+(setf *message-window-gravity* :center)
+(setf *input-window-gravity* :center)
 
 ;; Groups
 ;; TODO: group switch to predefined, otherwise initiate
@@ -98,7 +102,7 @@
 ;; change keyboard bindings
 (run-shell-command "setxkbmap dvorak")
 ;; wallpaper
-(stumpwm:run-shell-command "display -window root '/home/ben/Pictures/animlookdist.png'")
+;(stumpwm:run-shell-command "display -window root '/home/ben/Pictures/animlookdist.png'")
 
 
 ;; holding down keys: https://www.reddit.com/r/stumpwm/comments/2ph3nj/any_good_tutorial_about_stumpwm_any_tips/
@@ -116,4 +120,27 @@
 ;; Change the prefix key
 ;; keycode 115 = F20 in ~/.xmodmaprc, 115 being the left "windows" key.
 ;(set-prefix-key (kbd "F20"))
+
+;; Emacs
+
+(define-key *root-map* (kbd "e") "run-emacs")
+(defcommand run-emacs () ()
+  (run-shell-command "emacsclient -c -a \"\""))
+
+(define-key *root-map* (kbd "c") "run-terminal")
+(defcommand run-terminal () ()
+  (run-shell-command "io.elementary.terminal"))
+
+;; the illusive defapp command from here: https://github.com/NicolasPetton/stumpwm.d/blob/master/utils.lisp
+;(defmacro defapp (command &optional win-class)
+;  (unless win-class
+;    (setf win-class command))
+;  `(defcommand ,(intern (string-upcase command)) () ()
+;     ,(format nil "Run ~A unless it is already running, in which case focus it." command)
+;     (run-or-raise ,command '(:class ,(string-capitalize win-class)))))
+;
+;(defapp "chromium")
+;(defapp "discord")
+; (run-or-raise "xterm" '(:class "Xterm"))
+
 
