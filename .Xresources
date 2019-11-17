@@ -1,0 +1,75 @@
+!-------- Xterm Terminal Settings 
+!------------------------------------------------------
+! https://wiki.archlinux.org/index.php/Xterm
+! https://lukas.zapletalovi.com/2013/07/hidden-gems-of-xterm.html
+! http://www.futurile.net/2016/06/14/xterm-setup-and-truetype-font-configuration/
+! http://www.futurile.net/2016/06/15/xterm-256color-themes-molokai-terminal-theme/
+! taken mostly from https://github.com/gotbletu/shownotes/blob/master/xterm_xresources.md
+!https://www.youtube.com/watch?v=mAUQsNUnk9I
+XTerm.termName: xterm-256color
+
+XTerm*faceName: Dejavu Sans Mono
+XTerm*faceSize: 16
+
+!! Keybinding ========================================================
+! http://blog.rot13.org/2010/03/change-font-size-in-xterm-using-keyboard.html
+XTerm.vt100.translations: #override \n\
+ Ctrl <Key> minus: smaller-vt-font() \n\
+ Ctrl <Key> plus: larger-vt-font() \n\
+ Ctrl <Key> 0: set-vt-font(d) \n\
+ Ctrl <Key>C: copy-selection(CLIPBOARD) \n\
+ Ctrl <Key>V: insert-selection(CLIPBOARD) \n\
+ <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)  \n\
+ <Btn2Up>: insert-selection(PRIMARY)
+
+! enable copy/paste hotkey to work (shit+insert = paset; mouse highlight = copy)
+!Xterm*selectToClipboard: true
+
+! double-click to select whole URLs :D
+! https://scarygliders.net/2011/12/01/customize-xterm-the-original-and-best-terminal/
+!XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
+
+!-------- Theme: Solarized
+!------------------------------------------------------
+
+!!Source http://github.com/altercation/solarized
+!
+!*background: #002b36
+!*foreground: #657b83
+!!!*fading: 40
+!*fadeColor: #002b36
+!*cursorColor: #93a1a1
+!*pointerColorBackground: #586e75
+!*pointerColorForeground: #93a1a1
+!
+!!! black dark/light
+!*color0: #073642
+!*color8: #002b36
+!
+!!! red dark/light
+!*color1: #dc322f
+!*color9: #cb4b16
+!
+!!! green dark/light
+!*color2: #859900
+!*color10: #586e75
+!
+!!! yellow dark/light
+!*color3: #b58900
+!*color11: #657b83
+!
+!!! blue dark/light
+!*color4: #268bd2
+!*color12: #839496
+!
+!!! magenta dark/light
+!*color5: #d33682
+!*color13: #6c71c4
+!
+!!! cyan dark/light
+!*color6: #2aa198
+!*color14: #93a1a1
+!
+!!! white dark/light
+!*color7: #eee8d5
+!*color15: #fdf6e3
