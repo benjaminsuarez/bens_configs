@@ -1,0 +1,600 @@
+* tweaks to interface
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+;(load-theme 'tsdh-dark)
+(load-theme 'darkokai t)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+;;(global-linum-mode t) ;; enable line numbers globally
+
+;; this adds a second parenthesis when you type in first
+(electric-pair-mode 1)
+
+;; inserts current date 
+(defun insert-current-date () (interactive)
+    (insert (shell-command-to-string "echo -n $(date +%Y-%m-%d)")))
+#+END_SRC 
+* try
+#+BEGIN_SRC emacs-lisp
+(use-package try
+  :ensure t)
+#+END_SRC
+
+* Custom keybinds
+  #+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c a") 'org-agenda)
+;;to switch between windows
+;;https://kieranhealy.org/blog/archives/2009/10/12/make-shift-enter-do-a-lot-in-ess/ for make shift-enter do a lot in ess
+(global-set-key [C-tab] 'other-window)
+  #+END_SRC
+
+* which key
+  brings up help
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
+#+END_SRC
+
+* ;Python
+following the following guide https://realpython.com/emacs-the-best-python-editor/#elpy-python-development
+  #+BEGIN_SRC emacs-lisp
+;;  (defvar myPackages
+;;  '(better-defaults
+;;    elpy ;; add the elpy package
+;;  ;;  flycheck ;; add the flycheck package for realtime syntax checking
+;;   ; material-theme ;;the material theme
+;;    py-autopep8))
+;;
+;;    (elpy-enable)
+;;
+;;;;  (when (require 'flycheck nil t)
+;;;;  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;;;;  (add-hook 'elpy-mode-hook 'flycheck-mode))
+  
+  #+END_SRC
+** pep8 compliance with autopep8
+   #+BEGIN_SRC emacs-lisp
+;; 
+;;    (require 'py-autopep8)
+;;(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+   
+   #+END_SRC
+
+** pipenv porcelein
+https://github.com/pwalsh/pipenv.el
+   #+BEGIN_SRC emacs-lisp
+   (use-package pipenv
+  :hook (python-mode . pipenv-mode)
+  :init
+  (setq
+   pipenv-projectile-after-switch-function
+   #'pipenv-projectile-after-switch-extended))
+
+   (add-hook 'python-mode-hook #'pipenv-mode)
+
+   #+END_SRC
+* R
+  #+BEGIN_SRC emacs-lisp
+    ;;R path
+    (setq-default inferior-R-program-name "/bin/R")
+  #+END_SRC
+  #+BEGIN_SRC emacs-lisp
+;;company mode in ess and iess only
+(add-hook 'after-init-hook 'global-company-mode)
+(setq ess-use-company t)
+
+;;use flycheck with lintr, need to change path to where lintr.el is.
+;(require 'flycheck)
+;(add-hook 'ess-mode-hook
+;          (lambda () (flycheck-mode t)))
+;(load "path/to/flycheck-linter.el")
+
+
+;;for tabbar
+;(use-package tabbar
+;  :ensure t
+;  :config (tabbar-mode 1)
+;) 
+  #+END_SRC
+* Octave
+  #+BEGIN_SRC emacs-lisp
+;; octave (EOS) comes preinstalled since 2017 may not need use-package
+(add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
+(use-package octave
+  :defer t
+  :bind
+  ("M-<return>" . octave-send-line))
+
+;;(setq auto-mode-alist (cons '("\\.m$" . octave-mode) auto-mode-alist))
+;;(define-key octave-mode-map (kbd "M-<return>") 'octave-send-line)
+  #+END_SRC
+* Org-mode
+#+BEGIN_SRC emacs-lisp
+
+(unless package-archive-contents    ;; Refresh the packages descriptions
+  (package-refresh-contents))
+(setq package-load-list '(all))     ;; List of packages to load
+(unless (package-installed-p 'org)  ;; Make sure the Org package is
+  (package-install 'org))           ;; installed, install it if not
+(package-initialize)                ;; Initialize & Install Package
+
+(setq org-directory "~/emacs/org")
+
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))  
+#+END_SRC
+* Latex
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-toc-command "\\tableofcontents \\clearpage")
+#+END_SRC
+* LanguageTooal
+based on: https://joelkuiper.eu/spellcheck_emacs
+use langtool-check-buffer
+and langtool-correct-buffer
+  #+BEGIN_SRC emacs-lisp
+(require 'langtool)
+(setq langtool-language-tool-jar "~/.emacs.d/tools/LanguageTool/languagetool-commandline.jar"
+      langtool-mother-tongue "nl"
+      langtool-disabled-rules '("WHITESPACE_RULE"
+                                "EN_UNPAIRED_BRACKETS"
+                                "COMMA_PARENTHESIS_WHITESPACE"
+                                "EN_QUOTES"))
+
+  
+  #+END_SRC
+* Ox-pandoc
+ package-install ox-pandoc
+ org-pandoc-export-...
+ #+BEGIN_SRC emacs-lisp
+ #+END_SRC
+* Org-ref
+  #+BEGIN_SRC emacs-lisp
+;org-ref
+(require 'org-ref)
+(setq reftex-default-bibliography '("~/.emacs.d/bibliography/references.bib"))
+
+(setq org-ref-bibliography-notes "~/.emacs.d/bibliography/notes.org"
+      org-ref-default-bibliography '("~/.emacs.d/bibliography/references.bib")
+      org-ref-pdf-directory "~/.emacs.d/bibliography/bibtex-pdfs/")
+
+;;org-ref if you use helm-bibtex as citation key completion method
+(setq bibtex-completion-bibliography "~/.emacs.d/bibliography/references.bib"
+      bibtex-completion-library-path "~/.emacs.d/bibliography/bibtex-pdfs"
+      bibtex-completion-notes-path "~/.emacs.d/bibliography/helm-bibtex-notes")
+
+(setq bibtex-completion-pdf-open-function 'org-open-file)
+;; open pdf with system pdf viewer (works on mac)
+;(setq bibtex-completion-pdf-open-function
+;  (lambda (fpath)
+;    (start-process "open" "*open*" "open" fpath)))
+
+;; includes extra bibtex run inbetween compared to default
+(setq org-latex-pdf-process
+      '("pdflatex -interaction nonstopmode -output-directory %o %f"
+        "bibtex %b"
+        "pdflatex -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -interaction nonstopmode -output-directory %o %f"))
+  
+  #+END_SRC
+* Org-reveal (for presentations)
+  #+BEGIN_SRC emacs-lisp
+(use-package ox-reveal
+:ensure ox-reveal)
+
+(setq org-reveal-root "file:///home/ben/.emacs.d/slides/reveal.js");"~/.emacs.d/slides/reveal.js")
+; "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+(setq org-reveal-mathjax t)
+  
+  #+END_SRC
+* Org-journal
+  #+BEGIN_SRC emacs-lisp
+  (require 'org-journal)
+  (use-package org-journal
+   :custom
+   (org-journal-dir "~/.emacs.d/journal/")
+    )
+ (setq org-journal-enable-agenda-integration t)
+  #+END_SRC
+* Org-Agenda
+#+BEGIN_SRC emacs-lisp
+(org-agenda nil "a")
+(setq org-agenda-files (list org-directory))
+;(setq org-agenda-include-inactive-timestamps t) ;; didn't fix the journal agenda issueq
+; (custom-set-variables
+; '(org-directory "~/org")
+; '(org-agenda-files (list org-dir org-journal-dir)))
+; '(org-agenda-files (list org-dir)))
+#+END_SRC
+* Dired
+look into dired+
+some [[https://www.youtube.com/watch?v=Fg7HmmRYWy8][tips]]: C-x C-q: editable dired mode
+*% \| mark with regex
+( hide detail
+s: sort by name or date
+also look at [[http://emacsrocks.com/e13.html][multiple cursors]]. mc/mark-all-dwim
+[[https://www.youtube.com/watch?v=Fg7HmmRYWy8][ivy-occur]] looks cool
+with counsel fuzzy finder, counel-fzf and ivy-occur, get really impressive interactability, recursively find files and display dired for viewing/editing
+[[https://www.reddit.com/r/emacs/comments/cgbpvl/opening_media_files_straight_from_gnu_emacs_dired/][solutions]] to open files externally with "V" 
+#+BEGIN_SRC emacs-lisp
+(setq dired-listing-switches "-alh")
+#+END_SRC
+* gcal
+#+BEGIN_SRC emacs-lisp
+ (setq package-check-signature nil)
+
+
+  (use-package org-gcal
+    :ensure t
+    :config
+    (setq org-gcal-client-id "671473806239-qjeug27ls3b2cb0smf2phtl706v397i1.apps.googleusercontent.com"
+	  org-gcal-client-secret "tJDBP7DhDqq2rSjDEwwS74NV"
+	  org-gcal-file-alist '(("b.suarez1@nuigalway.ie" .  "~/emacs/org/gcal.org"))))
+
+(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
+(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
+
+#+END_SRC 
+see http://cestlaz.github.io/posts/using-emacs-26-gcal/#.W6JaaHWYXiw for org capture templates and custom cal and agenda
+* novel
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+#+END_SRC 
+* Ibuffer
+ http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq ibuffer-saved-filter-groups
+      (quote (("default"
+	       ("dired" (mode . dired-mode))
+	       ("org" (name . "^.*org$"))
+
+	       ("web" (or (mode . web-mode) (mode . js2-mode)))
+	       ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
+	       ("mu4e" (name . "\*mu4e\*"))
+	       ("programming" (or
+			       (mode . python-mode)
+			       (mode . c++-mode)))
+	       ("emacs" (or
+			 (name . "^\\*scratch\\*$")
+			 (name . "^\\*Messages\\*$")))
+	       ))))
+(add-hook 'ibuffer-mode-hook
+	  (lambda ()
+	    (ibuffer-auto-mode 1)
+	    (ibuffer-switch-to-saved-filter-groups "default")))
+
+;; don't show these
+					;(add-to-list 'ibuffer-never-show-predicates "zowie")
+;; Don't show filter groups if there are no buffers in that group
+(setq ibuffer-show-empty-filter-groups nil)
+
+;; Don't ask for confirmation to delete marked buffers
+(setq ibuffer-expert t)
+  #+END_SRC
+* html-Emmet
+  https://www.youtube.com/watch?v=gGPv7jsQGpc&t=329s
+  #+BEGIN_SRC emacs-lisp
+(use-package emmet-mode
+:ensure t
+:config
+(add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+(add-hook 'web-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+(add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
+)
+  
+  #+END_SRC
+* PDF tools
+  #+BEGIN_SRC emacs-lisp
+;(eval-after-load 'org '(require 'org-pdfview))
+;
+;(add-to-list 'org-file-apps 
+;             '("\\.pdf\\'" . (lambda (file link)
+;                                     (org-pdfview-open link))))
+  
+(use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install)
+  )
+  
+(use-package org-pdfview
+:ensure t)
+
+  #+END_SRC
+* Ido
+  #+BEGIN_SRC emacs-lisp
+    ;; note people also use helm instead of ido mode, councel.
+    (setq indo-enable-flex-matching t)
+    (setq ido-everywhere t)
+    (ido-mode 1) 
+  #+END_SRC
+* Swiper
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :ensure t
+    )
+
+  (use-package swiper
+    :ensure t
+    :config
+    (progn
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (global-set-key "\C-s" 'swiper)
+      (global-set-key (kbd "C-c C-r") 'ivy-resume)
+      (global-set-key (kbd "<f6>") 'ivy-resume)
+      (global-set-key (kbd "M-x") 'counsel-M-x)
+  ;    (global-set-key (kbd "C-x C-f") 'counsel-find-file) ;;compare to ido, ivy, ace jump mode, need to comment out ido  if using this
+      (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+      (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+      (global-set-key (kbd "<f1> l") 'counsel-load-library)
+      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+      (global-set-key (kbd "C-c g") 'counsel-git)
+      (global-set-key (kbd "C-c j") 'counsel-git-grep)
+      (global-set-key (kbd "C-c k") 'counsel-ag)
+      (global-set-key (kbd "C-x l") 'counsel-locate)
+      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+      (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+      ))
+  
+#+END_SRC
+* Avy
+  #+BEGIN_SRC emacs-lisp
+    (use-package avy
+      :ensure t
+      :bind ("M-s" . avy-goto-char))
+  #+END_SRC
+* mu4e
+  #+BEGIN_SRC emacs-lisp
+;; mu4e
+;;					;
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+(require 'smtpmail)
+
+;; this allows me to use org-mode links
+(require 'org-mu4e)
+
+; smtp
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-starttls-credentials
+      '(("outlook.office365.com" 587 nil nil))
+      smtpmail-default-smtp-server "outlook.office365.com"
+      smtpmail-smtp-server "outlook.office365.com"
+      smtpmail-smtp-service 587
+      smtpmail-debug-info t)
+
+(require 'mu4e)
+
+(Setq mu4e-maildir (expand-file-name "~/email/mbsyncmail"))
+
+(setq mu4e-drafts-folder "/Drafts")
+(setq mu4e-sent-folder   "/Sent Items")
+(setq mu4e-trash-folder  "/Trash")
+(setq message-signature-file "~/.emacs.d/.signature") ; put your signature in this file
+
+; get mail
+(setq mu4e-get-mail-command "mbsync -c ~/.emacs.d/.mbsyncrc uni"
+      mu4e-html2text-command "w3m -T text/html"
+      mu4e-update-interval 120 ;; second
+      mu4e-headers-auto-update t
+      mu4e-show-images t
+      mu4e-compose-signature-auto-include nil
+      mu4e-attachment-dir "~/Downloads"
+      mu4e-use-fancy-chars t
+      )
+
+(setq mu4e-maildir-shortcuts
+      '( ("/INBOX"               . ?i)
+         ("/Sent Items"   . ?s)
+         ("/Trash"       . ?t)
+         ("/Drafts"    . ?d)))
+
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types)
+  (imagemagick-register-types))
+
+;; general emacs mail settings; used when composing e-mail
+;; the non-mu4e-* stuff is inherited from emacs/message-mode
+(setq mu4e-reply-to-address "b.suarez1@nuigalway.ie"
+    user-mail-address "b.suarez1@nuigalway.ie"
+    user-full-name  "Benjamin Suarez")
+
+;; don't save message to Sent Messages, IMAP takes care of this
+; (setq mu4e-sent-messages-behavior 'delete)
+
+;; spell check
+(add-hook 'mu4e-compose-mode-hook
+        (defun my-do-compose-stuff ()
+           "My settings for message composition."
+           (set-fill-column 72)
+           (flyspell-mode)))
+  #+END_SRC
+
+* Ledger-mode
+  #+BEGIN_SRC emacs-lisp
+ (use-package ledger-mode
+ :ensure t
+ :init
+ (setq ledger-clear-whole-transactions 1)
+ 
+; :config
+ :mode "\\.dat\\'")
+  
+  #+END_SRC
+* Twittering-mode
+  #+BEGIN_SRC emacs-lisp
+  (setq twittering-use-master-password t)
+  (setq twittering-icon-mode t)
+  (setq twittering-use-icon-storage t)
+  #+END_SRC
+* Elfeed
+  #+BEGIN_SRC emacs-lisp
+(setq elfeed-db-directory "~/.emacs.d/org/elfeeddb")
+
+(use-package elfeed
+:ensure t
+
+:bind (:map  elfeed-search-mode-map
+        ("q" . bjm/elfeed-savedb-and-bury)
+	("Q" . bjm/elfeed-save-db-and-bury)
+	("m" . elfeed-toggle-star)
+	("M" . elfeed-toggle-star)
+	      )
+  )
+
+;;
+;;
+(defun elfeed-mark-all-as-read ()
+      (interactive)
+      (mark-whole-buffer)
+      (elfeed-search-untag-all-unread))
+
+
+;;functions to support syncing .elfeed between machines
+;;makes sure elfeed reads index from disk before launching
+(defun bjm/elfeed-load-db-and-open ()
+  "Wrapper to load the elfeed db from disk before opening"
+  (interactive)
+  (elfeed-db-load)
+  (elfeed)
+  (elfeed-search-update--force))
+
+;;write to disk when quiting
+(defun bjm/elfeed-save-db-and-bury ()
+  "Wrapper to save the elfeed db to disk before burying buffer"
+  (interactive)
+  (elfeed-db-save)
+  (quit-window))
+
+;;
+;;
+;(defalias 'elfeed-toggle-star
+;  (elfeed-expose #'elfeed-search-toggle-all 'star)) ;;elfeed-expose doesnt work)
+
+(use-package elfeed-goodies
+  :ensure t
+  :config
+  (elfeed-goodies/setup))
+
+
+(use-package elfeed-org
+  :ensure t
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/.emacs.d/org/elfeed.org")))
+
+  
+  #+END_SRC
+* Polymode
+  #+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode))
+
+(setq load-path
+      (append '("~/.emacs.d/polymode/" "~/.emacs.d/polymode/modes")
+              load-path))
+(require 'poly-R)
+(require 'poly-markdown)
+
+(add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))
+
+
+(add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode))
+;; for examples see: http://simon.bonners.ca/bonner-lab/wpblog/?p=142
+  #+END_SRC
+* rest
+#+BEGIN_SRC emacs-lisp
+
+;; Music from using emacs 43 - Music
+;(use-package simple-mpc
+;  :ensure t)
+;(use-package mingus
+;  :ensure t)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (polymode org-ref company ess org-bullets which-key try use-package))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; Music from using emacs 43 - Music
+;(use-package simple-mpc
+;  :ensure t)
+;(use-package mingus
+;  :ensure t)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (polymode org-ref company ess org-bullets which-key try use-package))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+
+#+END_SRC
+* ;mypackage
+ #+BEGIN_SRC emacs-lisp
+ 
+;; (mapc #'(lambda (package)
+;;    (unless (package-installed-p package)
+;;      (package-install package)))
+;;      myPackages)
+
+ #+END_SRC
+* startup
+  #+BEGIN_SRC emacs-lisp
+  (delete-other-windows)
+  #+END_SRC
+* Macrostep
+  #+BEGIN_SRC emacs-lisp
+  (use-package macrostep
+  :bind
+  ("C-c e m" . macrostep-expand)
+  )
+  #+END_SRC
+
+    
+* fzf
+need to install fzf before using with counsel
+counsel-fzf
+note: only looks into deeper levels from current directory
+* Shell
+from [[https://stackoverflow.com/questions/12224909/is-there-a-way-to-get-my-emacs-to-recognize-my-bash-aliases-and-custom-functions][stack overflow]]
+solves issue of alias not working, due to non-interactive. .bashrc only executed upon interactive shells
+use & to call for asynchronous shell
+  #+BEGIN_SRC emacs-lisp
+;(setq shell-file-name "bash")
+(setq shell-command-switch "-ic")
+  #+END_SRC
+* fixing regex
+need to use escapes when using regex otherwise. eg dired: *% -> jpg\|png
+  #+BEGIN_SRC emacs-lisp
+;(use-package pcre2el
+;:ensure t
+;:config
+;(pcre-mode)
+;)
+  #+END_SRC
